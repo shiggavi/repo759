@@ -1,40 +1,53 @@
 #!/usr/bin/python3
-import matplotlib.pyplot as plt
-import numpy as np
+import matplotlib.pyplot as plt 
 
-# File paths
-file_512 = "task3_512.out"
-file_16 = "task3_16.out"
+# Input file paths
+file_path = "task3.out"       # Output from 512 threads per block
+file_path1 = "task3_16.out"   # Output from 16 threads per block
 
-# Function to read the results
-def read_results(file_path):
-    sizes = []
-    times = []
-    with open(file_path, 'r') as file:
-        lines = file.readlines()
-        for i in range(0, len(lines), 3):  # Every third line is the timing
-            size = 2 ** (10 + (i // 3))
-            # Extract only the first value on the line as the timing information
-            time = float(lines[i].strip().split()[0])  # Split line and get the first item
-            sizes.append(size)
-            times.append(time)
-    return sizes, times
+y_pts = []  # Timing data for 512 threads
+y_pts1 = [] # Timing data for 16 threads
+x_pts = []  # Array size exponents (log2(n))
 
-# Read results for both configurations
-sizes_512, times_512 = read_results(file_512)
-sizes_16, times_16 = read_results(file_16)
+# Read results for 512 threads per block
+with open(file_path, 'r') as file:
+    for i, line in enumerate(file):
+        if i % 3 == 0:  # Every 3rd line corresponds to kernel time
+            y_pt = float(line.strip().split()[0])  # Take only the first value on the line
+            y_pts.append(y_pt)
+            x_pt = 10 + int(i / 3)  # Exponent (log2(n))
+            x_pts.append(x_pt)
 
-# Create the plot
-plt.figure()
-plt.plot(sizes_512, times_512, marker='o', label="512 Threads per Block")
-plt.plot(sizes_16, times_16, marker='x', label="16 Threads per Block")
-plt.xscale('log')  # Logarithmic scale for sizes
-plt.yscale('log')  # Logarithmic scale for times
-plt.xlabel("Array Size (n)")
-plt.ylabel("Time (ms)")
-plt.title("vscale Execution Time vs Array Size")
-plt.legend()
+# Read results for 16 threads per block
+with open(file_path1, 'r') as file:
+    for i, line in enumerate(file):
+        if i % 3 == 0 and line.strip():  # Every 3rd line and non-empty lines
+            y_pt = float(line.strip().split()[0])  # Take only the first value on the line
+            y_pts1.append(y_pt)
+
+# Synchronize lengths
+max_len = max(len(y_pts), len(y_pts1), len(x_pts))
+while len(y_pts) < max_len:
+    y_pts.append(0.0)  # Pad with 0 for missing data
+while len(y_pts1) < max_len:
+    y_pts1.append(0.0)  # Pad with 0 for missing data
+while len(x_pts) < max_len:
+    x_pts.append(10 + len(x_pts))  # Extend x_pts for extra data points
+
+# Plot results
+plt.figure(figsize=(10, 6))  # Set the figure size for better visibility
+plt.xticks(x_pts, labels=[f'{i}' for i in x_pts], fontsize=10)
+plt.yticks(fontsize=10)
+plt.plot(x_pts, y_pts, label='512 Threads per Block', marker='o')
+plt.plot(x_pts, y_pts1, label='16 Threads per Block', marker='x')
+
+# Set labels, title, and legend
+plt.title('Time Taken by vscale as a Function of Exponent (i)', fontsize=14)
+plt.xlabel('Exponent (i) for n = $2^i$', fontsize=12)
+plt.ylabel('Time Taken (ms)', fontsize=12)
+plt.legend(fontsize=10)
+plt.grid(True, linestyle='--', alpha=0.7)
 
 # Save the plot as a PDF
-plt.savefig("task3.pdf")
+plt.savefig('task3.pdf')
 
