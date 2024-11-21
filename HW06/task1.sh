@@ -4,7 +4,7 @@
 #SBATCH --output="task1.out"   
 #SBATCH --error="task1.err"    
 #SBATCH --gres=gpu:1              
-#SBATCH --time=0-00:05:00         
+#SBATCH --time=0-00:07:00         
 
 # Load the CUDA module
 module load nvidia/cuda/11.8.0

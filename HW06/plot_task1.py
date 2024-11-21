@@ -2,7 +2,7 @@
 import matplotlib.pyplot as plt 
 
 file_path = "task1.out"
-file_path1 = "task1_32.out"
+file_path1 = "task1_512.out"
 
 y_pts = []
 y_pts1 = []
