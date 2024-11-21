@@ -1,5 +1,0 @@
-/usr/bin/ld: /lib/../lib64/crt1.o: in function `_start':
-(.text+0x1b): undefined reference to `main'
-collect2: error: ld returned 1 exit status
-slurmstepd: error: execve(): /srv/home/shiggavi/repo759/HW06/./matmul: No such file or directory
-srun: error: euler02: task 0: Exited with exit code 2
