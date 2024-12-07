@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
     for (unsigned int i = 0; i < n * n; ++i)
     {
         h_Af[i] = dist2(gen);
-        h_Bf[i] = dist3(gen);
+        h_Bf[i] = dist2(gen);
     }
 
     for (unsigned int i = 0; i < n * n; ++i)
