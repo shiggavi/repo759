@@ -1,2 +1,1 @@
-/var/spool/slurmd/job632997/slurm_script: line 21: 3491936 Killed                  ./task1 $n $block_dim
-slurmstepd: error: Detected 1 oom-kill event(s) in StepId=632997.batch. Some of your processes may have been killed by the cgroup out-of-memory handler.
+slurmstepd: error: Detected 1 oom-kill event(s) in StepId=633262.batch. Some of your processes may have been killed by the cgroup out-of-memory handler.

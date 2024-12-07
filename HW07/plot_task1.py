@@ -1,32 +1,56 @@
-#! /usr/bin/python3
+#!/usr/bin/python3
 import matplotlib.pyplot as plt
+import numpy as np
 
-# File containing the output of task1
-file_path = "task1.out"
+# Input file path
+file_path = "results_q1.txt"
 
-# Lists to store x and y points
-x_pts = []
-y_pts = []
+# Initialize variables
+x_pts = []  # Exponent values (log2(n))
+y_matmul_1 = []  # Timing data for matmul_1
+y_matmul_2 = []  # Timing data for matmul_2
+y_matmul_3 = []  # Timing data for matmul_3
 
-# Read the output file and extract data
+# Read and parse results file
 with open(file_path, 'r') as file:
-    for i, line in enumerate(file):
-        # Extract time values on odd-indexed lines (1-based)
-        if (i + 1) % 3 == 0:  # Every third line corresponds to time
-            y_pt = float(line.strip())
-            y_pts.append(y_pt)
-            x_pt = 5 + i // 3  # Derive x-point based on the index
-            x_pts.append(x_pt)
+    lines = file.readlines()
+    for i in range(0, len(lines), 3):  # Each group of 3 lines corresponds to one n value
+        try:
+            # Parse timing for matmul_1, matmul_2, matmul_3
+            time_matmul_1 = float(lines[i].split(":")[1].split("ms")[0].strip())
+            time_matmul_2 = float(lines[i + 1].split(":")[1].split("ms")[0].strip())
+            time_matmul_3 = float(lines[i + 2].split(":")[1].split("ms")[0].strip())
 
-# Generate the plot
-plt.figure()
-plt.xticks(x_pts, labels=[f'$2^{{{i}}}$' for i in x_pts])
-plt.plot(x_pts, y_pts, label='threads_per_block = 1024', marker='o')
-plt.title('Matrix Multiplication Performance')
-plt.xlabel('Matrix Dimension (n)')
-plt.ylabel('Time (ms)')
-plt.legend()
+            # Determine the exponent (log2(n))
+            n_index = 5 + (i // 3)
 
-# Save the plot as a PDF
-plt.savefig('task1_plot.pdf')
+            # Append to lists
+            x_pts.append(n_index)
+            y_matmul_1.append(time_matmul_1)
+            y_matmul_2.append(time_matmul_2)
+            y_matmul_3.append(time_matmul_3)
+        except (ValueError, IndexError):
+            continue
+
+# Convert x_pts to actual matrix dimensions (2^i)
+x_labels = [f'$2^{{{i}}}$' for i in x_pts]
+
+# Plot results
+plt.figure(figsize=(12, 8))
+plt.plot(x_pts, y_matmul_1, label='matmul_1 (int)', marker='o', color='r')
+plt.plot(x_pts, y_matmul_2, label='matmul_2 (float)', marker='x', color='g')
+plt.plot(x_pts, y_matmul_3, label='matmul_3 (double)', marker='s', color='b')
+
+# Add labels, title, and grid
+plt.title('Execution Time of Matrix Multiplication Functions vs Dimensions of Matrix', fontsize=16)
+plt.xlabel('Dimension of Matrix ($2^i$)', fontsize=14)
+plt.ylabel('Execution Time (ms)', fontsize=14)
+plt.yscale('log')  # Logarithmic scale for the y-axis
+plt.xticks(ticks=x_pts, labels=x_labels, fontsize=12, rotation=45)
+plt.legend(fontsize=12)
+plt.grid(True, linestyle='--', alpha=0.7)
+
+# Save and show the plot
+plt.savefig('task1_plot_log.pdf')
+plt.show()
 
